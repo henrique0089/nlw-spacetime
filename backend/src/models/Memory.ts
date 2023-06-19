@@ -1,7 +1,16 @@
 import { prisma } from '../config/prisma'
+import { randomUUID } from 'node:crypto'
 
 interface MemoryProps {
   id: string
+  content: string
+  coverUrl: string
+  isPublic: boolean
+  userId: string | null
+  createdAt: Date
+}
+
+interface CreateMemoryProps {
   content: string
   coverUrl: string
   isPublic: boolean
@@ -17,10 +26,6 @@ interface UpdateMemoryProps {
 
 export class Memory {
   private props: MemoryProps
-
-  private constructor(props: MemoryProps) {
-    this.props = props
-  }
 
   public get id(): string {
     return this.props.id
@@ -40,6 +45,14 @@ export class Memory {
 
   public get userId(): string | null {
     return this.props.userId
+  }
+
+  public get createdAt(): Date {
+    return this.props.createdAt
+  }
+
+  private constructor(props: MemoryProps) {
+    this.props = props
   }
 
   static async findAll(userId: string) {
@@ -75,13 +88,14 @@ export class Memory {
       coverUrl: memory.coverUrl,
       isPublic: memory.isPublic,
       userId: memory.userId,
+      createdAt: memory.createdAt,
     })
   }
 
-  static async create(data: MemoryProps) {
-    await prisma.memory.create({
+  static async create(data: CreateMemoryProps) {
+    const memory = await prisma.memory.create({
       data: {
-        id: data.id,
+        id: randomUUID(),
         content: data.content,
         coverUrl: data.coverUrl,
         isPublic: data.isPublic,
@@ -89,7 +103,14 @@ export class Memory {
       },
     })
 
-    return new Memory(data)
+    return new Memory({
+      id: memory.id,
+      content: memory.content,
+      coverUrl: memory.coverUrl,
+      isPublic: memory.isPublic,
+      userId: memory.userId,
+      createdAt: memory.createdAt,
+    })
   }
 
   static async update(data: UpdateMemoryProps) {
@@ -110,6 +131,15 @@ export class Memory {
       coverUrl: memory.coverUrl,
       isPublic: memory.isPublic,
       userId: memory.userId,
+      createdAt: memory.createdAt,
+    })
+  }
+
+  static async delete(memoryId: string) {
+    await prisma.memory.delete({
+      where: {
+        id: memoryId,
+      },
     })
   }
 }

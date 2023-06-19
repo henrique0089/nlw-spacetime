@@ -1,4 +1,3 @@
-import { randomUUID } from 'node:crypto'
 import { FastifyReply, FastifyRequest } from 'fastify'
 import { z } from 'zod'
 
@@ -35,8 +34,16 @@ export class MemoriesController {
 
     const memory = await Memory.findOne(id)
 
-    if (!memory.isPublic && memory.userId !== req.user.sub) {
+    if (!memory.isPublic) {
       return rep.status(401).send()
+    }
+
+    return {
+      id: memory.id,
+      coverUrl: memory.coverUrl,
+      content: memory.content,
+      isPublic: memory.isPublic,
+      createdAt: memory.createdAt,
     }
   }
 
@@ -50,7 +57,6 @@ export class MemoriesController {
     const { content, coverUrl, isPublic } = bodySchema.parse(req.body)
 
     await Memory.create({
-      id: randomUUID(),
       content,
       coverUrl,
       isPublic,
@@ -73,17 +79,37 @@ export class MemoriesController {
 
     const { content, coverUrl, isPublic } = bodySchema.parse(req.body)
 
-    let memory = await Memory.findOne(id)
+    const memory = await Memory.findOne(id)
 
     if (memory.userId !== req.user.sub) {
       return rep.status(401).send()
     }
 
-    memory = await Memory.update({
+    await Memory.update({
       memoryId: id,
       content,
       coverUrl,
       isPublic,
     })
+  }
+
+  async deleteMemory(req: FastifyRequest, rep: FastifyReply) {
+    const paramsSchema = z.object({
+      id: z.string().uuid(),
+    })
+
+    const { id } = paramsSchema.parse(req.params)
+
+    const memory = await Memory.findOne(id)
+
+    if (memory.id === '') {
+      return rep.status(404).send()
+    }
+
+    if (memory.userId !== req.user.sub) {
+      return rep.status(401).send()
+    }
+
+    await Memory.delete(id)
   }
 }

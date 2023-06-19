@@ -14,11 +14,7 @@ export async function GET(req: NextRequest) {
   const { token } = response.data
 
   const redirectUrl =
-    redirectTo ??
-    new URL(
-      'https://3000-henrique008-nlwspacetim-26dzknvznsw.ws-us98.gitpod.io/',
-      req.url,
-    )
+    redirectTo ?? new URL(process.env.NEXT_PUBLIC_BASE_URL ?? '', req.url)
 
   const cookieExpiresInSeconds = 60 * 60 * 24 * 30
 

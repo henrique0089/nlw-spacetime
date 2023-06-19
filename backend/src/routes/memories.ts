@@ -12,4 +12,5 @@ export async function memoriesRoutes(app: FastifyInstance) {
   app.get('/memories/:id', memoriesController.getMemory)
   app.post('/memories', memoriesController.createMemory)
   app.put('/memories/:id', memoriesController.updateMemory)
+  app.delete('/memories/:id', memoriesController.deleteMemory)
 }
