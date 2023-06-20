@@ -5,7 +5,12 @@ import { useState } from 'react'
 import { DateSelector } from './DateSelector'
 import { Calendar } from './Calendar'
 
-export function DatePicker() {
+interface DatePickerProps {
+  selectedDate: Date | null
+  onDateSelected: (date: Date) => void
+}
+
+export function DatePicker({ selectedDate, onDateSelected }: DatePickerProps) {
   const [isCalendarOpen, setIsCalendarOpen] = useState(false)
 
   function showStartDateCalendar() {
@@ -19,7 +24,12 @@ export function DatePicker() {
       <div className="relative">
         <DateSelector onClick={showStartDateCalendar} />
 
-        {isCalendarOpen && <Calendar />}
+        {isCalendarOpen && (
+          <Calendar
+            selectedDate={selectedDate}
+            onDateSelected={onDateSelected}
+          />
+        )}
       </div>
     </div>
   )

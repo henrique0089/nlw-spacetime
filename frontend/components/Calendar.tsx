@@ -19,7 +19,12 @@ interface CalendarWeek {
 
 type CalendarWeeks = CalendarWeek[]
 
-export function Calendar() {
+interface CalendarProps {
+  selectedDate: Date | null
+  onDateSelected: (date: Date) => void
+}
+
+export function Calendar({ selectedDate, onDateSelected }: CalendarProps) {
   const [now, setNow] = useState(() => {
     return dayjs().set('date', 1)
   })
@@ -103,6 +108,10 @@ export function Calendar() {
     return calendarWeeks
   }, [now])
 
+  function isSameDate(date: dayjs.Dayjs): boolean {
+    return dayjs(selectedDate).isSame(date, 'day')
+  }
+
   return (
     <div className="absolute top-8 flex w-72 flex-col gap-2 rounded-md border-2 border-gray-800 bg-gray-900 p-4">
       <div className="flex items-center justify-between">
@@ -146,10 +155,12 @@ export function Calendar() {
                 <td className="box-border" key={date.toString()}>
                   <button
                     disabled={disabled}
-                    className={`aspect-square w-full text-center font-bold text-gray-100 hover:text-gray-200 disabled:text-gray-300 ${
-                      date.get('date') === new Date().getDate() &&
-                      'rounded-full bg-gray-700'
+                    className={`aspect-square w-full text-center font-bold text-gray-100 ${`${
+                      !isSameDate(date) && 'hover:text-gray-200'
+                    }`} disabled:text-gray-300 ${
+                      isSameDate(date) && 'rounded-full bg-green-700 text-white'
                     }`}
+                    onClick={() => onDateSelected(date.toDate())}
                   >
                     {date.get('date')}
                   </button>

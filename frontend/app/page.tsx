@@ -1,5 +1,4 @@
 import { CopyToClipboardButton } from '@/components/CopyToClipboardButton'
-import { DatePicker } from '@/components/DatePicker'
 import { DeleteMemoryButton } from '@/components/DeleteMemoryButton'
 import { EmptyMemories } from '@/components/EmptyMemories'
 import { api } from '@/lib/api'
@@ -41,8 +40,6 @@ export default async function Home() {
     <div className="flex flex-col gap-10 p-8">
       {memories.map((memory) => (
         <div key={memory.id} className="space-y-4">
-          <DatePicker />
-
           <div className="flex items-center justify-between">
             <time className="-ml-8 flex items-center gap-2 text-sm text-gray-100 before:h-px before:w-5 before:bg-gray-50">
               {dayjs(memory.createdAt).format('D[ de ]MMMM[, ]YYYY')}
