@@ -69,10 +69,30 @@ export class Memory {
       return {
         id: memory.id,
         coverUrl: memory.coverUrl,
+        isPublic: memory.isPublic,
         excerpt: memory.content.substring(0, 115).concat('...'),
         createdAt: memory.createdAt,
       }
     })
+  }
+
+  static async findOneByDate(userId: string, date: Date) {
+    const memory = await prisma.memory.findFirst({
+      orderBy: {
+        createdAt: 'asc',
+      },
+      where: {
+        userId,
+        createdAt: date,
+      },
+    })
+
+    return {
+      id: memory?.id,
+      coverUrl: memory?.coverUrl,
+      excerpt: memory?.content.substring(0, 115).concat('...'),
+      createdAt: memory?.createdAt,
+    }
   }
 
   static async findOne(memoryId: string) {

@@ -55,7 +55,9 @@ export default function Layout() {
       >
         <Stack.Screen name="index" redirect={isUserAuthenticated} />
         <Stack.Screen name="new" />
-        <Stack.Screen name="memories" />
+        <Stack.Screen name="memories/index" />
+        <Stack.Screen name="memories/[id]" />
+        <Stack.Screen name="memories/edit/[id]" />
       </Stack>
 
       <StatusBar style="light" />

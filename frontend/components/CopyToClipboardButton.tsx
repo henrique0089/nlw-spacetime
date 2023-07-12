@@ -36,7 +36,7 @@ export function CopyToClipboardButton({ memoryId }: ClipboardButtonProps) {
       ) : (
         <>
           <Copy className="h-4 w-4" />
-          Copiar para área de transferência
+          Copiar Link
         </>
       )}
     </button>

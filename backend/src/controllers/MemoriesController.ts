@@ -1,28 +1,29 @@
 import { FastifyReply, FastifyRequest } from 'fastify'
 import { z } from 'zod'
 
-import { prisma } from '../config/prisma'
 import { Memory } from '../models/Memory'
 
 export class MemoriesController {
   async getAllMemories(req: FastifyRequest) {
-    const memories = await prisma.memory.findMany({
-      orderBy: {
-        createdAt: 'desc',
-      },
-      where: {
-        userId: req.user.sub,
-      },
+    const memories = await Memory.findAll(req.user.sub)
+
+    return memories
+  }
+
+  async getMemoryByDate(req: FastifyRequest) {
+    const querySchema = z.object({
+      createdAt: z.coerce.date(),
     })
 
-    return memories.map((memory) => {
-      return {
-        id: memory.id,
-        coverUrl: memory.coverUrl,
-        excerpt: memory.content.substring(0, 115).concat('...'),
-        createdAt: memory.createdAt,
-      }
-    })
+    const { createdAt } = querySchema.parse(req.query)
+
+    const memory = await Memory.findOneByDate(req.user.sub, createdAt)
+
+    if (memory.id === '') {
+      throw new Error('Memory not found!')
+    }
+
+    return memory
   }
 
   async getMemory(req: FastifyRequest, rep: FastifyReply) {
@@ -34,7 +35,7 @@ export class MemoriesController {
 
     const memory = await Memory.findOne(id)
 
-    if (!memory.isPublic) {
+    if (!memory.isPublic && memory.userId !== req.user.sub) {
       return rep.status(401).send()
     }
 

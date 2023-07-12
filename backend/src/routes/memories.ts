@@ -9,6 +9,7 @@ export async function memoriesRoutes(app: FastifyInstance) {
   })
 
   app.get('/memories', memoriesController.getAllMemories)
+  app.get('/memories/by-date', memoriesController.getMemoryByDate)
   app.get('/memories/:id', memoriesController.getMemory)
   app.post('/memories', memoriesController.createMemory)
   app.put('/memories/:id', memoriesController.updateMemory)
