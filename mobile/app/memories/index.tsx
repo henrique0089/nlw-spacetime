@@ -15,6 +15,7 @@ dayjs.locale(ptBr)
 export interface MemoryData {
   id: string
   coverUrl: string
+  isPublic: boolean
   excerpt: string
   createdAt: string
 }
@@ -23,7 +24,6 @@ export default function Memories() {
   const { top, bottom } = useSafeAreaInsets()
   const router = useRouter()
   const [memories, setMemories] = useState<MemoryData[]>([])
-  const [copied, setCopied] = useState(false)
 
   async function signOut() {
     await SecureStore.deleteItemAsync('token')
@@ -47,12 +47,8 @@ export default function Memories() {
     loadMemories()
   }, [])
 
-  function handleCopyUrlToClipboard() {
-    setCopied(true)
-
-    setTimeout(() => {
-      setCopied(false)
-    }, 1500)
+  function handleShare() {
+    console.log('compartilhado')
   }
 
   async function handleDeleMemory(memoryId: string) {
@@ -66,6 +62,8 @@ export default function Memories() {
 
     setMemories(memories.filter((memory) => memory.id !== memoryId))
   }
+
+  // const url = createURL('memories', {})
 
   return (
     <ScrollView
@@ -102,26 +100,19 @@ export default function Memories() {
                 </Text>
               </View>
 
-              <TouchableOpacity
-                className="mr-8 flex-row items-center gap-2"
-                onPress={() => handleCopyUrlToClipboard()}
-              >
-                {copied ? (
+              {memory.isPublic && (
+                <TouchableOpacity
+                  className="mr-8 flex-row items-center gap-2"
+                  onPress={() => handleShare()}
+                >
                   <>
-                    <Icon name="check-circle" size={16} color="#bebebf" />
+                    <Icon name="share" size={16} color="#bebebf" />
                     <Text className="font-body text-xs text-gray-100">
-                      Copiado
+                      Compartilhar Link
                     </Text>
                   </>
-                ) : (
-                  <>
-                    <Icon name="copy" size={16} color="#bebebf" />
-                    <Text className="font-body text-xs text-gray-100">
-                      Copiar Link
-                    </Text>
-                  </>
-                )}
-              </TouchableOpacity>
+                </TouchableOpacity>
+              )}
             </View>
 
             <View className="space-y-4 px-8">
