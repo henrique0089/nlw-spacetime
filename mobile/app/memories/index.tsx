@@ -47,11 +47,7 @@ export default function Memories() {
     loadMemories()
   }, [])
 
-  function handleShare() {
-    console.log('compartilhado')
-  }
-
-  async function handleDeleMemory(memoryId: string) {
+  async function handleDeleteMemory(memoryId: string) {
     const token = await SecureStore.getItemAsync('token')
 
     await api.delete(`/memories/${memoryId}`, {
@@ -62,8 +58,6 @@ export default function Memories() {
 
     setMemories(memories.filter((memory) => memory.id !== memoryId))
   }
-
-  // const url = createURL('memories', {})
 
   return (
     <ScrollView
@@ -99,20 +93,6 @@ export default function Memories() {
                   {dayjs(memory.createdAt).format('D[ de ]MMMM[, ]YYYY')}
                 </Text>
               </View>
-
-              {memory.isPublic && (
-                <TouchableOpacity
-                  className="mr-8 flex-row items-center gap-2"
-                  onPress={() => handleShare()}
-                >
-                  <>
-                    <Icon name="share" size={16} color="#bebebf" />
-                    <Text className="font-body text-xs text-gray-100">
-                      Compartilhar Link
-                    </Text>
-                  </>
-                </TouchableOpacity>
-              )}
             </View>
 
             <View className="space-y-4 px-8">
@@ -150,7 +130,7 @@ export default function Memories() {
 
                   <TouchableOpacity
                     className="flex-row items-center gap-2"
-                    onPress={() => handleDeleMemory(memory.id)}
+                    onPress={() => handleDeleteMemory(memory.id)}
                   >
                     <Icon name="x-circle" size={16} color="#9e9ea0" />
                     <Text className="font-body text-sm text-gray-200">
